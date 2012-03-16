@@ -22,17 +22,17 @@ class TestCodeDecodeParts(unittest.TestCase):
     hamming = hamming.Hamming(4)
 
     def test_code_part(self):
-        "hamming.code_part should return the proper result"
+        "hamming.part_coder should return the proper result"
         for original, coded in self.known_pairs:
             self.assertEqual(
-                    self.hamming.code_part(base.Bits(original)),
+                    self.hamming.part_coder(base.Bits(original)),
                     coded
                     )
     def test_decode_part(self):
-        "hamming.decode_part should return the proper result"
+        "hamming.part_decoder should return the proper result"
         for original, coded in self.known_pairs:
             self.assertEqual(
-                    self.hamming.decode_part(base.Bits(coded)),
+                    self.hamming.part_decoder(base.Bits(coded)),
                     original
                     )
 

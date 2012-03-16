@@ -16,10 +16,10 @@ class Hamming(object):
     def __init__(self, n=4):
         self.n = n
 
-    def code_part(self, part, strong=False):
+    def part_coder(self, part, strong=False):
         """Codes the n-bits-long parts of the message.
         >>> hamming = Hamming(4)
-        >>> hamming.code_part("0110")
+        >>> hamming.part_coder("0110")
         '1100110'
         """
         if isinstance(part, base.Bits):
@@ -58,7 +58,7 @@ class Hamming(object):
         else:
             assert isinstance(bits, base.Bits)
         parts = bits.split(self.n)
-        coded = [self.code_part(part)
+        coded = [self.part_coder(part)
                  for part in parts]
         return base.Bits("".join(coded))
 
