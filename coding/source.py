@@ -51,7 +51,7 @@ class FixSource(object):
 
     >>> f = FixSource("ABCDD")
     >>> f.message()
-    Message("5:abcdd")
+    Message("5:ABCDD")
     >>> f = FixSource("0110", Bits)
     """
 
@@ -59,7 +59,8 @@ class FixSource(object):
         if isinstance(message, (Message, Bits)):
             self.__message = message
         else:
-            assert class_ in [Message, Bits]
+            assert class_ in [Message, Bits],\
+                "class_ should be Message or Bits"
             assert isinstance(message, str)
             self.__message = class_(message)
 

@@ -1,9 +1,29 @@
-from .base import Code
-from .source import Source
-# from entropy import Huffman
-# from dictionary import LZ78
-# from check import CRC
-# from correction import Hamming
+"""Package for teaching information and coding theory.
 
-Kod = Code
-Forras = Source
+>>> from coding import *
+>>> source = Source([.5, .25, .25])
+>>> mesg = source.message()
+>>> mesg
+Message("100:AAACACCAAAAAACABCCABACAAACCCAAAAACACBBAAACCBACBAABAABBACBCBABCABBAABBBABABCBACBCABBBCAAACAAAABBBAAAB")
+>>> mesg.count()
+Out[16]: {'A': 49, 'B': 28, 'C': 23}
+>>> mesg.split(30)
+['AAACACCAAAAAACABCCABACAAACCCAA',
+ 'AAACACBBAAACCBACBAABAABBACBCBA',
+ 'BCABBAABBBABABCBACBCABBBCAAACA',
+ 'AAABBBAAAB']
+>>> code = Code("0 10 11")
+>>> bits = code.coder(mesg)
+>>> bits
+Bits("151:0001101111000000110101111010011000111111000001101110100001111100111000100010100111011100101101010001010100100101110011101101010101100011000010101000010")
+>>> bits.count()
+{'0': 77, '1': 74}
+>>> ham = coding.Hamming(11)
+>>> ham.coder(bits)
+Bits("207:010000111011110110000000110101001011011001100000111111110000010111001110100000001111110011001000011000101010001101011100001101100101000111101011001001100011100011101001101001010110110001100000101010110010010")
+
+"""
+
+from .hamming import Hamming
+from .base import Code, Bits, Message
+from .source import Source, FixSource

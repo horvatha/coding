@@ -49,6 +49,11 @@ class Message(object):
                 counter[symbol] = 1
         return counter
 
+    def split(self, n):
+        """Splits the message into n-symbols-long parts"""
+        divpoints = range(0, len(self.message), n)
+        return [self.message[divpoints[i]:divpoints[i]+n]
+                for i in range(len(divpoints))]
 
 class Bits(Message):
 
@@ -64,9 +69,18 @@ class Code(object):
     >>> code = Code("00 01 10 11")
     """
     def __init__(self, code):
-        assert set(code).issubset(set("01 "))
+        assert set(code).issubset(set("01 ")),\
+            "The code should have 0, 1 and --to divide codewords-- space"
         code = code.split()
         self.code = code
+        assert len(code) == len(set(code)),\
+            "There should not be duplicated codeword"
+        for i in range(len(code)):
+            for j in range(len(code)):
+                if i != j:
+                    assert not code[j].startswith(code[i]), \
+                        "the code {0} should not start"\
+                        " with the another codeword {1}".format(code[j], code[i])
         code = list(zip(code, SYMBOLS))
         self.__decode = dict(code)  #code: symbol
         self.__code = dict([(x,y) for y,x in code])  #symbol: code

@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-# coding: utf-8
 
 """Hamming coding
 
@@ -10,17 +9,15 @@ from __future__ import print_function
 from coding import base
 
 __author__ = 'Arpad Horvath'
-# wh for def cl defs ifmain imp fr _ pdb + <Tab>
 
 class Hamming(object):
     """Hamming code
     """
     def __init__(self, n=4):
-        super(Hamming, self).__init__()
         self.n = n
 
-    def code_part(self, part):
-        """Codes the n-long-part of the message.
+    def code_part(self, part, strong=False):
+        """Codes the n-bits-long parts of the message.
         >>> hamming = Hamming(4)
         >>> hamming.code_part("0110")
         '1100110'
@@ -29,6 +26,8 @@ class Hamming(object):
             part = part.message
         else:
             assert isinstance(part, str)
+        if strong:
+            assert len(part) == self.n
         i = 1
         two_powers = [2**j for j in range(len(part)+1)]
         hamming_code = []
@@ -53,4 +52,13 @@ class Hamming(object):
 
         return "".join(hamming_code)
 
+    def coder(self, bits):
+        if isinstance(bits, str):
+            bits = base.Bits(bits)
+        else:
+            assert isinstance(bits, base.Bits)
+        parts = bits.split(self.n)
+        coded = [self.code_part(part)
+                 for part in parts]
+        return base.Bits("".join(coded))
 
