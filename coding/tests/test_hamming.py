@@ -16,6 +16,8 @@ class TestCodeDecodeParts(unittest.TestCase):
             (UNCODED[:4], CODED[:7]),
             (UNCODED[4:], CODED[7:]),
             ("1", "111"),
+            ("0110", "1100110"),
+            ("110011", "1011100011"),
             )
     hamming = hamming.Hamming(4)
 
@@ -35,28 +37,30 @@ class TestCodeDecodeParts(unittest.TestCase):
                     )
 
 
-class TestCodeDecode(unittest.TestCase):
+class TestCoderDecoder(unittest.TestCase):
 
     known_pairs = (
             (UNCODED, CODED),
-            (UNCODED[:5], CODED[:10]),
+            (UNCODED[:5], "0101010111"),
             )
     hamming_ = hamming.Hamming(4)
 
-    def test_code(self):
-        "hamming.code should return the proper result"
+    def test_coder(self):
+        "hamming.coder should return the proper result"
         for original, coded in self.known_pairs:
             self.assertEqual(
-                    self.hamming_.code(Bits(original)),
+                    self.hamming_.coder(base.Bits(original)).message,
                     coded
                     )
-    def test_decode(self):
-        "hamming.decode should return the proper result"
+
+    def test_decoder(self):
+        "hamming.decoder should return the proper result"
         for original, coded in self.known_pairs:
             self.assertEqual(
-                    self.hamming_.decode(Bits(coded)),
+                    self.hamming_.decoder(base.Bits(coded)).message,
                     original
                     )
+
     def test_inverse(self):
         "decoder should be the inverse of coder"
         source_ = source.Source([.5,.5], symbols="01")
