@@ -5,6 +5,18 @@
 from coding import base
 import unittest
 
+
+class TestChangeBits(unittest.TestCase):
+    known_pairs = (
+        (("01110", 2),       "00110"),
+        (("01110", [2]),     "00110"),
+        (("01110", [1,2]),   "10110"),
+        (("01110", [1,5]),   "11111"),
+        )
+    def test_results(self):
+        for args, result in self.known_pairs:
+            self.assertEqual(base.change_bits(*args), result)
+
 class TestMessage(unittest.TestCase):
 
     good_messages = (

@@ -5,11 +5,37 @@ import string
 
 SYMBOLS = string.ascii_uppercase
 
+class CodingError(Exception):
+    "The base class of the Errors of coding package."
+    pass
+class UndecodeableError(CodingError): pass
+
 def pprint(list_):
     """Pretty string format for lists with symbols"""
     n = len(list_)
     list_ = ["{p[0]}:{p[1]}".format(p=pair) for pair in zip(SYMBOLS[:n], list_)]
     return ", ".join(list_)
+
+def change_bits(bits, index_list):
+    """Changes the bites of bits.
+
+    Parameters:
+        bits: a string like "01101"
+        index_list: integer or list of integers
+            The indices of the bits we want to
+            change. The smallest index is 1, not 0.
+
+    Returns:
+        The changed bits as a string.
+
+    """
+    other_bit = {"0": "1", "1": "0"}
+    if isinstance(index_list, int):
+        index_list = [index_list]
+    for index in index_list:
+        assert index <= len(bits)
+        bits = bits[:index-1] + other_bit[bits[index-1]] + bits[index:]
+    return bits
 
 class Message(object):
     """Message

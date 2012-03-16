@@ -24,6 +24,6 @@ Bits("207:0100001110111101100000001101010010110110011000001111111100000101110011
 
 """
 
-from .hamming import Hamming
+from .correction import Hamming
 from .base import Code, Bits, Message
 from .source import Source, FixSource
