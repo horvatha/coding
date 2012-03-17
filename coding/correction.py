@@ -42,7 +42,7 @@ def delete_parity_bits(code):
 class Hamming(object):
     """Hamming code
     """
-    def __init__(self, m=4):
+    def __init__(self, m=4, **kwargs):
         self.m = m
         self.n = SingleErrorCorrection.all_bits(m=m)
 
@@ -117,4 +117,7 @@ class Hamming(object):
             else:
                 bits = base.change_bits(bits, bad_parity_sum)
         return delete_parity_bits(bits)
+
+    def __repr__(self):
+        return "Hamming({0})".format(self.m)
 

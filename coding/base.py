@@ -66,6 +66,9 @@ class Message(object):
     def __repr__(self):
         return 'Message("{0}")'.format(self)
 
+    def __len__(self):
+        return len(self.message)
+
     def count(self):
         counter = {}
         for symbol in self.message:
@@ -89,12 +92,18 @@ class Bits(Message):
     def __repr__(self):
         return 'Bits("{0}")'.format(self)
 
+    def flip_bits(self, indices):
+        bits = list(self.message)
+        for i in indices:
+            bits[i] = "0" if bits[i] == "1" else "1"
+        return Bits("".join(bits))
+
 class Code(object):
     """Code class
 
     >>> code = Code("00 01 10 11")
     """
-    def __init__(self, code):
+    def __init__(self, code, **kwargs):
         assert set(code).issubset(set("01 ")),\
             "The code should have 0, 1 and --to divide codewords-- space"
         code = code.split()
@@ -107,7 +116,8 @@ class Code(object):
                     assert not code[j].startswith(code[i]), \
                         "the code {0} should not start"\
                         " with the another codeword {1}".format(code[j], code[i])
-        code = list(zip(code, SYMBOLS))
+        self.symbols = kwargs.get("symbols", SYMBOLS)
+        code = list(zip(code, self.symbols))
         self.__decode = dict(code)  #code: symbol
         self.__code = dict([(x,y) for y,x in code])  #symbol: code
 
@@ -115,7 +125,10 @@ class Code(object):
         return pprint(self.code)
 
     def __repr__(self):
-        return "Code('{0}')".format(" ".join(self.code))
+        if self.symbols == SYMBOLS:
+            return "Code('{0}')".format(" ".join(self.code))
+        else:
+            return "Code('{0}', symbols={1!r})".format(" ".join(self.code), self.symbols)
 
     def __len__(self):
         return len(self.__decode)

@@ -76,6 +76,13 @@ class TestMessage(unittest.TestCase):
             message = base.Message(mesg)
             self.assertEqual("{0}".format(message), str_)
 
+class TestMessage(unittest.TestCase):
+    def test_flip_bits(self):
+        "Bits.flip_bits should flip the proper bits"
+        bits = base.Bits("0111001")
+        self.assertEqual(bits.flip_bits([0,4,5]).message,
+                "1"*7)
+
 class TestCode(unittest.TestCase):
     codes = (
         ("00011011", "ABCD"),
