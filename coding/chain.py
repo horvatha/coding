@@ -27,6 +27,9 @@ class Chain(object):
             if self.verbosity: print(codec.__repr__(), "decoder")
             print(output)
             outputs.append(output)
+        if self.verbosity and outputs[0].message != outputs[-1].message:
+            print("Differs from the original:")
+            print(outputs[0])
 
         return outputs
 

@@ -16,7 +16,7 @@ chain = Chain(
     source,
     Code("00 01 10 11", symbols=source.symbols),
     Hamming(4),
-    Channel("4"),
+    Channel(4),
     verbosity = 0,
     )
 result = chain.run()

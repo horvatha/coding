@@ -17,7 +17,7 @@ def pprint(list_):
     return ", ".join(list_)
 
 def change_bits(bits, index_list):
-    """Changes the bites of bits.
+    """Changes the given bits of bits.
 
     Parameters:
         bits: a string like "01101"
@@ -157,9 +157,5 @@ class Code(object):
             if not changed:
                 raise ValueError("The rest of the code is not decodable")
                 break
-        message ="".join(message)
+        message = "".join(message)
         return Message(message)
-
-    kodol = coder
-    dekodol = decoder
-
