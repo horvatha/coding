@@ -16,6 +16,7 @@ from coding import (Chain, FixSource, Source, Code, Hamming, Channel)
 
 source = Source([1/4, 1/4, 1/4, 1/4], length=10)
 #source = Source([1/2, 1/4, 1/8, 1/8], length=10)
+#source = FixSource("ALABAMA")
 
 chain = Chain(
     source,
