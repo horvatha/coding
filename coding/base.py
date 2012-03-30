@@ -140,12 +140,13 @@ class Code(object):
         encoded = "".join(encoded)
         return Bits(encoded)
 
-    def decoder(self, bits):
+    def decoder(self, bits, strict=False):
         if not isinstance(bits, Bits):
             bits = Bits(bits)
         message = []
         bits = bits.message[:]
-        #TODO infinite cycle solved?
+        #TODO infinite cycle solved? I think, yes.
+        sane = True
         while bits:
             changed = False
             for code in self.__decode:
@@ -155,7 +156,10 @@ class Code(object):
                     changed = True
                     break
             if not changed:
-                raise ValueError("The rest of the code is not decodable")
+                sane = False
+                if strict:
+                    raise ValueError("The rest of the code is not decodable")
                 break
+        #TODO Should check sane boolean variable.
         message = "".join(message)
         return Message(message)
