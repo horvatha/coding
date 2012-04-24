@@ -29,7 +29,16 @@ class Chain(object):
             outputs.append(output)
         if self.verbosity and outputs[0].message != outputs[-1].message:
             print("Differs from the original:")
-            print(outputs[0])
+            print(str(len(outputs[0].message))+":", end="") # puts the characters count at the start
+            max = len(outputs[0].message)
+            if (max > len(output.message)):
+              max = len(output.message)
+            for i in range(max):
+              if outputs[0].message[i] == output.message[i]:
+                print ('\033[92m'+outputs[0].message[i],end="") # right characters, green
+              else:
+                print ('\033[31m'+outputs[0].message[i],end="") # wrong characters, red
+            print('\033[0m') # return to defaults
 
         return outputs
 
