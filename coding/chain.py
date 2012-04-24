@@ -30,8 +30,8 @@ class Chain(object):
         if self.verbosity and outputs[0].message != outputs[-1].message:
             print("Differs from the original:")
             print(str(len(outputs[0].message))+":", end="") # puts the characters count at the start
-            max = len(outputs[0].message)
-            if (max > len(output.message)):
+            max = len(outputs[0].message) 
+            if (max > len(output.message)): # check which is longer
               max = len(output.message)
             for i in range(max):
               if outputs[0].message[i] == output.message[i]:
