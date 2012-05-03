@@ -1,5 +1,5 @@
 from coding import base
-from coding import colordiff
+from coding import Colordiff
 
 class Chain(object):
     """It simulates an information transmitting chain.
@@ -19,19 +19,30 @@ class Chain(object):
             if self.verbosity: print(codec.__repr__(), "coder")
             print(output)
             outputs.append(output)
-        output_coder = output
         output = self.channel.run(output)
+        print(Colordiff.Diff("a","a"))
         if self.verbosity: print(self.channel.__repr__())
         print(output)
         outputs.append(output)
         for codec in reversed(self.codecs):
             output = codec.decoder(output)
             if self.verbosity: print(codec.__repr__(), "decoder")
-            #print(output)
+            print(output)
             outputs.append(output)
-            print("Diffing: ",output_coder,output)
-            print(colordiff.Diff(output_coder,output))
         if self.verbosity and outputs[0].message != outputs[-1].message:
             print("Differs from the original:")
-            print(colordiff.Diff(outputs[0], output))
+            print(str(len(outputs[0].message))+":", end="") # puts the characters count at the start
+            max = len(outputs[0].message) 
+            if (max > len(output.message)): # check which is longer
+              max = len(output.message)
+            for i in range(max):
+              if outputs[0].message[i] == output.message[i]:
+                print ('\033[92m'+outputs[0].message[i],end="") # right characters, green
+              else:
+                print ('\033[31m'+outputs[0].message[i],end="") # wrong characters, red
+            print('\033[0m') # return to defaults
+
         return outputs
+
+
+
