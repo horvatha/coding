@@ -1,4 +1,5 @@
 from coding import base
+from coding import Colordiff
 
 class Chain(object):
     """It simulates an information transmitting chain.
@@ -19,6 +20,7 @@ class Chain(object):
             print(output)
             outputs.append(output)
         output = self.channel.run(output)
+        print(Colordiff.Diff("a","a"))
         if self.verbosity: print(self.channel.__repr__())
         print(output)
         outputs.append(output)
