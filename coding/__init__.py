@@ -29,4 +29,3 @@ from .base import Code, Bits, Message
 from .source import Source, FixSource
 from .channel import Channel
 from .chain import Chain
-from .Colordiff import Colordiff
