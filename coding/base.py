@@ -2,6 +2,10 @@
 """
 
 import string
+import collections
+
+import math
+log2 = lambda x: math.log(x)/math.log(2)
 
 SYMBOLS = string.ascii_uppercase
 
@@ -70,13 +74,12 @@ class Message(object):
         return len(self.message)
 
     def count(self):
-        counter = {}
+        counter = collections.OrderedDict()
+        for symbol in self.symbols:
+            counter[symbol] = 0
         for symbol in self.message:
-            if symbol in counter:
-                counter[symbol] += 1
-            else:
-                counter[symbol] = 1
-        return counter
+            counter[symbol] += 1
+        return list(counter.items())
 
     def split(self, n):
         """Splits the message into n-symbols-long parts"""

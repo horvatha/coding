@@ -83,6 +83,12 @@ class TestMessage(unittest.TestCase):
         self.assertEqual(bits.flip_bits([0,4,5]).message,
                 "1"*7)
 
+    def test_count(self):
+        "count should return the the symbols in the proper order"
+        for msg_str in "CABBBAA BACCCA ABBBCCC CBA".split():
+            mesg = base.Message(msg_str, symbols="ABC")
+            self.assertEqual([x for x, y in mesg.count()], ["A", "B", "C"])
+
 class TestCode(unittest.TestCase):
     codes = (
         ("00011011", "ABCD"),

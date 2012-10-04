@@ -1,4 +1,4 @@
-from coding.base import Bits, Message, Code, SYMBOLS, pprint
+from coding.base import Bits, Message, Code, SYMBOLS, pprint, log2
 from random import random
 
 class Source(object):
@@ -6,6 +6,8 @@ class Source(object):
     def __init__(self, distribution, symbols=SYMBOLS,
             **kwargs):
         """Az objektum létrehozásakor az eloszlás helyességét ellenőrzi."""
+        if isinstance(distribution, int):
+            distribution = [1/distribution] * distribution
         self.distribution = distribution
         assert len(distribution) <= len(symbols), "Túl kevés a jel."
         assert sum(distribution) == 1, "A valószínűségek összege nem 1, hanem %f." % sum(distribution)
@@ -47,6 +49,9 @@ class Source(object):
             symbol = self.random_symbol(as_symbol=False)
             message += self.symbols[symbol]
         return Message(message, self.symbols)
+
+    def entropy(self):
+        return sum([p*log2(1/p) for p in self.distribution])
 
     uzenet = message
 
