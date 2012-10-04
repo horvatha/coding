@@ -109,7 +109,7 @@ class TestCode(unittest.TestCase):
     def testUndecodable(self):
         "undecodable bits should raise error"
         code = base.Code("00 01 10 11")
-        self.assertRaises(ValueError, code.decoder, "011")
+        self.assertRaises(ValueError, code.decoder, "011", strict=True)
 
     def testBadCodes(self):
         "bad codes should raise error"

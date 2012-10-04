@@ -44,8 +44,9 @@ def change_bits(bits, index_list):
 class Message(object):
     """Message
     """
-    def __init__(self, message, symbols=SYMBOLS):
+    def __init__(self, message, symbols=SYMBOLS, broken=False):
         self.symbols = symbols
+        self.broken = broken
         parts = message.split(":")
         assert len(parts) < 3, "too many colons"
         if len(parts) == 2:
@@ -68,7 +69,8 @@ class Message(object):
         return "{0}:{1}".format(len(self.message), self.message)
 
     def __repr__(self):
-        return 'Message("{0}")'.format(self)
+        is_broken = ", broken=True" if self.broken else ""
+        return 'Message("{0}"{1})'.format(self, is_broken)
 
     def __len__(self):
         return len(self.message)
@@ -149,7 +151,7 @@ class Code(object):
         message = []
         bits = bits.message[:]
         #TODO infinite cycle solved? I think, yes.
-        sane = True
+        broken = False
         while bits:
             changed = False
             for code in self.__decode:
@@ -159,10 +161,9 @@ class Code(object):
                     changed = True
                     break
             if not changed:
-                sane = False
+                broken = True
                 if strict:
                     raise ValueError("The rest of the code is not decodable")
                 break
-        #TODO Should check sane boolean variable.
         message = "".join(message)
-        return Message(message)
+        return Message(message, broken=broken)
