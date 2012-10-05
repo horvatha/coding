@@ -35,7 +35,7 @@ class Chain(object):
             outputs.append(output)
         if self.verbosity and outputs[0].message != outputs[-1].message:
             print("Differs from the original:")
-            print(colortools.diff(outputs[-1], outputs[0]), "broken" if output.broken else "")
+            print(colortools.diff(outputs[0], outputs[-1]), "broken" if output.broken else "")
 
         return outputs
 

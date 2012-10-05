@@ -1,4 +1,5 @@
 from coding import base
+import sys
 
 COLORS = dict(
         list(zip([
@@ -18,9 +19,14 @@ COLORS = dict(
 
 escape = lambda color: '\033[{0}m'.format(COLORS[color])
 
-GOOD = escape("lightgreen")
-WRONG = escape("red")
-RESET = '\033[0m'
+USE_COLOR = sys.platform.startswith("linux")
+
+if USE_COLOR:
+    GOOD = escape("lightgreen")
+    WRONG = escape("red")
+    RESET = '\033[0m'
+else:
+    GOOD = WRONG = RESET = ''
 
 def cprint(*args, **kwargs):
     """Prints with the color given as keyword argument color.
@@ -45,10 +51,12 @@ def cprint(*args, **kwargs):
 
     """
     color = escape(kwargs.pop("color", "red"))
-    args = list(args)
-    print(color, end="")
+    if USE_COLOR:
+        args = list(args)
+        print(color, end="")
     print(*args, **kwargs)
-    print(RESET, end="")
+    if USE_COLOR:
+        print(RESET, end="")
 
 def diff(message1, message2):
   """Usage: import:
