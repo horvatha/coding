@@ -24,4 +24,4 @@ chain = Chain(
     Channel(0),
     verbosity = 0,
     )
-result = chain.run()
+result = chain.print_run()

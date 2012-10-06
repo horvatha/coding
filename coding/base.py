@@ -37,7 +37,7 @@ def change_bits(bits, index_list):
     if isinstance(index_list, int):
         index_list = [index_list]
     for index in index_list:
-        assert index <= len(bits)
+        assert index <= len(bits), "index = {0} must be smaller than len(bits) = {1}".format(index, len(bits))
         bits = bits[:index-1] + other_bit[bits[index-1]] + bits[index:]
     return bits
 
@@ -91,8 +91,8 @@ class Message(object):
 
 class Bits(Message):
 
-    def __init__(self, bits):
-        super().__init__(bits, symbols="01")
+    def __init__(self, bits, broken=False):
+        super().__init__(bits, symbols="01", broken=broken)
 
     def __repr__(self):
         return 'Bits("{0}")'.format(self)

@@ -1,5 +1,6 @@
 from coding import base
 import sys
+import difflib
 
 COLORS = dict(
         list(zip([
@@ -17,16 +18,17 @@ COLORS = dict(
             ))
         )
 
-escape = lambda color: '\033[{0}m'.format(COLORS[color])
-
-USE_COLOR = sys.platform.startswith("linux")
-
+USE_COLOR = sys.platform.startswith("linux") and not any(mod.startswith("idlelib.") for mod in sys.modules)
 if USE_COLOR:
-    GOOD = escape("lightgreen")
-    WRONG = escape("red")
-    RESET = '\033[0m'
+    escape = lambda color: '\033[{0}m'.format(COLORS[color])
 else:
-    GOOD = WRONG = RESET = ''
+    escape = lambda color: ''
+
+GOOD = escape("lightgreen")
+WRONG = escape("red")
+RESET = '\033[0m' if USE_COLOR else ''
+
+colored = lambda string, color: escape(color) + string + RESET
 
 def cprint(*args, **kwargs):
     """Prints with the color given as keyword argument color.
@@ -52,35 +54,64 @@ def cprint(*args, **kwargs):
     """
     color = escape(kwargs.pop("color", "red"))
     if USE_COLOR:
-        args = list(args)
         print(color, end="")
     print(*args, **kwargs)
     if USE_COLOR:
         print(RESET, end="")
 
-def diff(message1, message2):
-  """Usage: import:
-     from coding import colordiff
-     Then use it colordiff.diff(text1, text2)
-     text1, text2 parameters can be string, message or bits, otherwise it needs to be cast to string
-     it will print the text1 with the correct markings(green means correct, red means wrong)."""
-  return_text = ""
-  if isinstance(message1, (base.Message, base.Bits)):  # convert to string
-    text1 = message1.message
-  else:
-    text1 = message1
-  if isinstance(message2, (base.Message, base.Bits)):  # convert to string
-    text2 = message2.message
-  else:
-    text2 = message2
+def diff(text1, text2, with_difflib=False, use_space=False):
+    """Compare two strings, Bits or Messages, and colorize the first one.
 
-  lengths = [len(text) for text in (text1, text2)]
-  for i in range(min(lengths)):
-      if text1[i] == text2[i]:
-          return_text += GOOD + text1[i]   # good characters are marked with green
-      else:
-          return_text += WRONG + text1[i]  # wrong characters are marked with red
-  return_text += RESET # reset the terminal, required to dismiss the effect green/red color on text
-  return_text += text1[min(lengths):lengths[0]]
-  return "{0}:{1}".format(lengths[0], return_text)
+       text1 and text2 parameters can be string, Message or Bits. It will
+       colorize message1 with the appropriate colors (green: correct,
+       red: wrong).
+
+    """
+    if isinstance(text1, (base.Message, base.Bits)):
+        text1 = text1.message
+    if isinstance(text2, (base.Message, base.Bits)):
+        text2 = text2.message
+
+    colored1, colored2 = "", ""
+    if min(len(text1), len(text2)) == 0:
+        return colored(text1, "red"), colored(text2, "red")
+    if with_difflib:
+        assert text1 and text1[-1] != "\n" and text2 and text2[-1] != "\n"
+        text1 += "\n"
+        text2 += "\n"
+
+        diff = list(difflib.Differ().compare(text1, text2))[:-1]
+
+        for char in diff:
+            if char[0] == "+":
+                colored1 += " "
+                colored2 += WRONG + char[-1]
+            elif char[0] == " ":
+                colored1 += GOOD + char[-1]
+                colored2 += GOOD + char[-1]
+            elif char[0] == "-":
+                colored1 += WRONG + char[-1]
+                colored2 += " "
+
+        colored1 += RESET
+        colored2 += RESET
+
+        if not use_space:
+            colored1 = colored1.translate({32: None})
+            colored2 = colored2.translate({32: None})
+    else:
+        minlen = min(len(text1), len(text2))
+        for i in range(minlen):
+            if text2[i] != text1[i]:
+                colored1 += WRONG + text1[i]
+                colored2 += WRONG + text2[i]
+            else:
+                colored1 += GOOD + text1[i]
+                colored2 += GOOD + text2[i]
+        colored1 += RESET
+        colored2 += RESET
+        colored1 += text1[minlen:]
+        colored2 += text2[minlen:]
+
+    return colored1, colored2
 

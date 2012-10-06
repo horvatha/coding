@@ -14,13 +14,24 @@ class Channel(object):
         "4/8"  changes four bits for every 8 bits
         "2-4/8"  combination of the previous two
         "bits=0,2,-1" changes the bits 0, 1, and last
+        [0,2,-1]      as the previous
         "ber=0.1"  bit error rate = 0.1
+        0.1        as in previous
     """
     def __init__(self, description, **kwargs):
         if isinstance(description, int):
             description = str(description)
+        if isinstance(description, list):
+            for i in description:
+                assert isinstance(i, int)
+            description = "bits={0}".format(
+                    ",".join(str(b) for b in description)
+                    )
+        if isinstance(description, float):
+            assert 0 <= description < 1
+            description = "ber={0}".format(description)
         splitted = description.split("=")
-        assert 0 < len(splitted) < 3
+        assert len(splitted) in (1, 2)
         if len(splitted) == 1:
             self.type = "num"
             self.value = description

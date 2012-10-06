@@ -46,7 +46,7 @@ class Hamming(object):
         self.m = m
         self.n = SingleErrorCorrection.all_bits(m=m)
 
-    def part_coder(self, bits, strong=False):
+    def part_coder(self, bits, strict=False):
         """Codes the m-bits-long parts of the message.
         >>> hamming = Hamming(4)
         >>> hamming.part_coder("0110")
@@ -56,7 +56,7 @@ class Hamming(object):
             bits = bits.message
         else:
             assert isinstance(bits, str)
-        if strong:
+        if strict:
             assert len(bits) == self.m
         i = 1
         two_powers = [2**j for j in range(len(bits)+1)]
@@ -96,11 +96,17 @@ class Hamming(object):
         if isinstance(bits, str):
             bits = base.Bits(bits)
         coded_parts = bits.split(self.n)
-        parts = [self.part_decoder(part)
-                 for part in coded_parts]
-        return base.Bits("".join(parts))
+        broken = False
+        parts = []
+        for part in coded_parts:
+            try:
+                parts.append(self.part_decoder(part))
+            except base.UndecodeableError:
+                broken = True
+                break
+        return base.Bits("".join(parts), broken=broken)
 
-    def part_decoder(self, bits, strong=False):
+    def part_decoder(self, bits, strict=False):
         bad_parity_sum = 0
         parity = 1
         while parity <= len(bits):
@@ -112,8 +118,8 @@ class Hamming(object):
                 bad_parity_sum += parity
             parity *= 2
         if bad_parity_sum:
-            if bad_parity_sum > self.n:
-                raise base.UndecodeableError("bad_parity_sum={0} is greater then the code length={1}".format(bad_parity_sum, self.n))
+            if bad_parity_sum > len(bits):
+                raise base.UndecodeableError("bad_parity_sum={0} is greater then the code len(bits)={1}".format(bad_parity_sum, len(bits)))
             else:
                 bits = base.change_bits(bits, bad_parity_sum)
         return delete_parity_bits(bits)
