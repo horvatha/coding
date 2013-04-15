@@ -166,4 +166,4 @@ class Code(object):
                     raise ValueError("The rest of the code is not decodable")
                 break
         message = "".join(message)
-        return Message(message, broken=broken)
+        return Message(message, symbols=self.symbols, broken=broken)

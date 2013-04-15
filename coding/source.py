@@ -1,6 +1,8 @@
 from coding.base import Bits, Message, Code, SYMBOLS, pprint, log2
 from random import random
 
+class CodingSourceError(Exception): pass
+
 class Source(object):
     """Creating radom messages."""
     def __init__(self, distribution, symbols=SYMBOLS,
@@ -13,7 +15,13 @@ class Source(object):
         assert sum(distribution) == 1, "A valószínűségek összege nem 1, hanem %f." % sum(distribution)
         self.symbols = symbols[:len(distribution)]
         self.n = len(distribution)
-        self.length = kwargs.get("length")
+        self.length = kwargs.pop("length", None)
+        if kwargs:
+            raise CodingSourceError(
+                "Invalid arument(s): {0}".format(
+                    ", ".join(kwargs.keys())
+                    )
+                )
 
     def __str__(self):
         return pprint(self.distribution)
@@ -35,15 +43,15 @@ class Source(object):
         else:
             return i
 
-    def message(self, n=100):
+    def message(self, n=None):
         """Egy véletlen üzenetet ad vissza a megadott eloszlással.
 
         Argumentumok:
             n: a jelek száma,
         """
 
-        if self.length:
-            n = self.length
+        if n is None:
+            n = self.length if self.length else 100
         message = ""
         for i in range(n):
             symbol = self.random_symbol(as_symbol=False)
@@ -52,6 +60,9 @@ class Source(object):
 
     def entropy(self):
         return sum([p*log2(1/p) for p in self.distribution])
+
+    def information(self):
+        return [(sym, log2(1/p)) for sym, p in zip(self.symbols, self.distribution)]
 
     uzenet = message
 

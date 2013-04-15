@@ -84,21 +84,23 @@ def diff(text1, text2, with_difflib=False, use_space=False):
 
         for char in diff:
             if char[0] == "+":
-                colored1 += " "
+                if use_space:
+                    colored1 += " "
                 colored2 += WRONG + char[-1]
             elif char[0] == " ":
                 colored1 += GOOD + char[-1]
                 colored2 += GOOD + char[-1]
             elif char[0] == "-":
                 colored1 += WRONG + char[-1]
-                colored2 += " "
+                if use_space:
+                    colored2 += " "
 
         colored1 += RESET
         colored2 += RESET
 
-        if not use_space:
-            colored1 = colored1.translate({32: None})
-            colored2 = colored2.translate({32: None})
+        #if not use_space:
+        #    colored1 = colored1.translate({32: None})
+        #    colored2 = colored2.translate({32: None})
     else:
         minlen = min(len(text1), len(text2))
         for i in range(minlen):

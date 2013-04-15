@@ -18,7 +18,7 @@ chain = Chain(
     Hamming(4),
     Channel(1),
     #Channel([24,26]),  # with code 00 01 10 11 decode is broken
-    #Channel(.1),  # with code 00 01 10 11 decode is broken
+    #Channel(.1),
     verbosity = 1,
     )
 result = chain.print_run()

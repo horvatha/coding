@@ -14,8 +14,8 @@ class Run(object):
         for pair in self.outputs:
             yield pair
 
-    def print(self, outformat="{direction} {length:2} {message} {brokenness}",
-              upmark="A", downmark="V",
+    def print(self, outformat="{direction} {length:2} \"{message}\" {brokenness}",
+              upmark="Δ", downmark="∇",
               with_elements=True):
         pairs = self.iter_pairs()
         broken_string = colortools.colored("broken", "red")
