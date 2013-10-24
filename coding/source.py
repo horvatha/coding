@@ -7,12 +7,31 @@ class Source(object):
     """Creating radom messages."""
     def __init__(self, distribution, symbols=SYMBOLS,
             **kwargs):
-        """Az objektum létrehozásakor az eloszlás helyességét ellenőrzi."""
+        """Creates a Source object, and checks the validity of the distribution.
+
+        Az objektum létrehozásakor az eloszlás helyességét ellenőrzi.
+
+        Arguments:
+
+        distribution: list
+            The list of the probablities of the symbols.
+        symbols: default the uppercase letters in alphabetic order
+            The symbols of the source. The first letter will have the first
+            possibilities of the distribution variable and so on.
+
+        Keyword arguments:
+
+        length: int
+            The default lenth of the message
+        sum_precision: float, default 1e-13
+            The precision of the sum of the probablities must be be 1.
+        """
         if isinstance(distribution, int):
             distribution = [1/distribution] * distribution
         self.distribution = distribution
         assert len(distribution) <= len(symbols), "Túl kevés a jel."
-        assert sum(distribution) == 1, "A valószínűségek összege nem 1, hanem %f." % sum(distribution)
+        sum_precision = kwargs.pop("sum_precision", 1e-13)
+        assert abs(sum(distribution) - 1) < sum_precision, "A valószínűségek összege nem 1, hanem %f." % sum(distribution)
         self.symbols = symbols[:len(distribution)]
         self.n = len(distribution)
         self.length = kwargs.pop("length", None)
