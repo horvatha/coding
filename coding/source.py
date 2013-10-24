@@ -5,16 +5,15 @@ class CodingSourceError(Exception): pass
 
 class Source(object):
     """Creating radom messages."""
-    def __init__(self, distribution, symbols=SYMBOLS,
+    def __init__(self, distribution, *, symbols=SYMBOLS,
             **kwargs):
-        """Creates a Source object, and checks the validity of the distribution.
-
-        Az objektum létrehozásakor az eloszlás helyességét ellenőrzi.
+        """Create a Source object, and checks the validity of the distribution.
 
         Arguments:
 
-        distribution: list
-            The list of the probablities of the symbols.
+        distribution: list or int
+            The list of the probablities of the symbols or the number of
+            symbols of an IID Source.
         symbols: default the uppercase letters in alphabetic order
             The symbols of the source. The first letter will have the first
             possibilities of the distribution variable and so on.

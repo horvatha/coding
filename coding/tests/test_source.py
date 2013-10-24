@@ -13,6 +13,7 @@ class TestSource(unittest.TestCase):
                 "iid5": coding.Source(5),
                 "ird4": coding.Source([1/2, 1/4, 1/8, 1/8]),
                 "ird5": coding.Source([1/2, 1/8, 1/8, 1/8, 1/8]),
+                "ird5_2": coding.Source([.2, .5, .1, .1, .1]),
             }
 
     def testBadDistribution(self):
@@ -36,6 +37,7 @@ class TestSource(unittest.TestCase):
         self.assertEqual(self.sources["iid5"].entropy(), log2(5))
         self.assertEqual(self.sources["ird4"].entropy(), 1.75)
         self.assertEqual(self.sources["ird5"].entropy(), 2)
+        self.assertAlmostEqual(self.sources["ird5_2"].entropy(), 1.9609640474436814)
 
 if __name__ == "__main__":
     unittest.main()
