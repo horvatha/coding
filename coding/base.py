@@ -41,7 +41,7 @@ def change_bits(bits, index_list):
         bits = bits[:index-1] + other_bit[bits[index-1]] + bits[index:]
     return bits
 
-class Message(object):
+class Message:
     """Message
     """
     def __init__(self, message, symbols=SYMBOLS, broken=False):
@@ -103,7 +103,7 @@ class Bits(Message):
             bits[i] = "0" if bits[i] == "1" else "1"
         return Bits("".join(bits))
 
-class Code(object):
+class Code:
     """Code class
 
     >>> code = Code("00 01 10 11")

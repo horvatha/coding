@@ -3,7 +3,7 @@ from random import random
 
 class CodingSourceError(Exception): pass
 
-class Source(object):
+class Source:
     """Creating radom messages."""
     def __init__(self, distribution, *, symbols=SYMBOLS,
             **kwargs):
@@ -24,11 +24,19 @@ class Source(object):
             The default lenth of the message
         sum_precision: float, default 1e-13
             The precision of the sum of the probablities must be be 1.
+        class_: Bits of Message
+            The class of the source.
         """
         if isinstance(distribution, int):
             distribution = [1/distribution] * distribution
         self.distribution = distribution
         assert len(distribution) <= len(symbols), "Túl kevés a jel."
+        self.class_ = kwargs.pop("class_", Message)
+        if self.class_ is Bits:
+            symbols = "01"
+            assert len(self.distribution) < 3, 'distribution of Bits must be smaller than 3'
+        else:
+            assert self.class_ is Message, 'class_ must be Bits or Message'
         sum_precision = kwargs.pop("sum_precision", 1e-13)
         assert abs(sum(distribution) - 1) < sum_precision, "A valószínűségek összege nem 1, hanem %f." % sum(distribution)
         self.symbols = symbols[:len(distribution)]
@@ -45,7 +53,8 @@ class Source(object):
         return pprint(self.distribution)
 
     def __repr__(self):
-        return "Source({0})".format(self.distribution)
+        msg = ", class_=Bits" if self.class_ is Bits else ""
+        return "Source({0}{1})".format(self.distribution, msg)
 
     def random_symbol(self, as_symbol=True):
         """Egy véletlen jelet ad vissza a megadott eloszlással."""
@@ -74,7 +83,7 @@ class Source(object):
         for i in range(n):
             symbol = self.random_symbol(as_symbol=False)
             message += self.symbols[symbol]
-        return Message(message, self.symbols)
+        return self.class_(message, self.symbols)
 
     def entropy(self):
         return sum([p*log2(1/p) for p in self.distribution])
@@ -84,7 +93,13 @@ class Source(object):
 
     uzenet = message
 
-class FixSource(object):
+
+class BitSource(Source):
+    def __init__(self, distribution=2, **kwargs):
+        super().__init__(distribution, symbols='01',
+                class_=Bits, **kwargs)
+
+class FixSource:
     """Creating a constant message.
 
     >>> f = FixSource("ABCDD")

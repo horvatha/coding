@@ -7,14 +7,15 @@
 from __future__ import division
 from __future__ import print_function
 from coding import base
-from math import ceil
+from math import ceil, floor
+#from coding.debug import debugmethods, debug
 
 __author__ = 'Arpad Horvath'
 
-class SingleErrorCorrection(object):
+class SingleErrorCorrection:
     @classmethod
     def message_bits(klass, r):
-        return ceil(2**r - r - 1)
+        return 2**r - r - 1
     @classmethod
     def redundant_bits(klass, m):
         assert isinstance(m, int) and m > 0
@@ -23,11 +24,8 @@ class SingleErrorCorrection(object):
             r += 1
         return r
     @classmethod
-    def all_bits(klass, r=None, m=None):
-        if m:
-            assert r is None, "If m is given, r must be None."
-            r = klass.redundant_bits(m)
-        return ceil(2**r - 1)
+    def all_bits(klass, m=None):
+        return m + klass.redundant_bits(m)
 
 def delete_parity_bits(code):
     "Deletes parity bits from Hamming code"
@@ -39,13 +37,14 @@ def delete_parity_bits(code):
         parity *= 2
     return "".join([code[i] for i in range(n) if i+1 not in parity_bits])
 
-class Hamming(object):
+class Hamming:
     """Hamming code
     """
     def __init__(self, m=4, **kwargs):
         self.m = m
-        self.n = SingleErrorCorrection.all_bits(m=m)
+        self.n = SingleErrorCorrection.all_bits(m)
 
+    #@debug
     def part_coder(self, bits, strict=False):
         """Codes the m-bits-long parts of the message.
         >>> hamming = Hamming(4)
@@ -82,6 +81,7 @@ class Hamming(object):
 
         return "".join(hamming_code)
 
+    #@debug
     def coder(self, bits):
         if isinstance(bits, str):
             bits = base.Bits(bits)
@@ -92,6 +92,7 @@ class Hamming(object):
                  for part in parts]
         return base.Bits("".join(coded))
 
+    #@debug
     def decoder(self, bits):
         if isinstance(bits, str):
             bits = base.Bits(bits)
@@ -106,6 +107,7 @@ class Hamming(object):
                 break
         return base.Bits("".join(parts), broken=broken)
 
+    #@debug
     def part_decoder(self, bits, strict=False):
         bad_parity_sum = 0
         parity = 1

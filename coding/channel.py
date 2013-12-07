@@ -2,7 +2,7 @@ import random
 from coding import base
 
 
-class Channel(object):
+class Channel:
     """docstring for Channel
 
     The index of the first bit is zero.

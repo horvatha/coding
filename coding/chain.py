@@ -3,7 +3,7 @@ from coding import colortools
 
 CHAINCOLOR = "blue"
 
-class Run(object):
+class Run:
     "outputs of the runs"
 
     def __init__(self, outputs, chain):
@@ -35,7 +35,7 @@ class Run(object):
             print(outformat.format(**down_dict))
             print(outformat.format(**up_dict))
 
-class Chain(object):
+class Chain:
     """It simulates an information transmitting chain.
     """
     def __init__(self, *elements, **kwargs):
@@ -83,4 +83,9 @@ class Chain(object):
             self.run()
         run = self.runs[n]
         run.print(**kwargs)
+
+    def print_all(self, **kwargs):
+        for run in self.runs:
+            run.print(**kwargs)
+            print()
 
