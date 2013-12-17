@@ -14,8 +14,22 @@ __author__ = 'Arpad Horvath'
 
 class SingleErrorCorrection:
     @classmethod
-    def message_bits(klass, r):
-        return 2**r - r - 1
+    def message_bits(klass, r=None, n=None):
+        if r is not None:
+            assert n is None, 'r and n must not be given in the same function call'
+            return 2**r - r - 1
+        else:
+            return klass.message_bits_from_all_bits(n=n)
+    @classmethod
+    def message_bits_from_all_bits(klass, n):
+        assert isinstance(n, int) and n > 2
+        m = n
+        exp = 1
+        while exp < n:
+            m -= 1
+            exp *= 2
+        assert exp != n, 'The length of a Hamming code must not be 2 exponent.'
+        return m
     @classmethod
     def redundant_bits(klass, m):
         assert isinstance(m, int) and m > 0
@@ -129,3 +143,13 @@ class Hamming:
     def __repr__(self):
         return "Hamming({0})".format(self.m)
 
+def hamming_coder(bit_string):
+    'Given a block, it returns its Hamming code.'
+    hamming = Hamming(len(bit_string))
+    return hamming.coder(bit_string).message
+
+def hamming_decoder(bit_string):
+    'Given a block of Hamming code, it returns the message.'
+    m = SingleErrorCorrection.message_bits(n=len(bit_string))
+    hamming = Hamming(m)
+    return hamming.decoder(bit_string).message

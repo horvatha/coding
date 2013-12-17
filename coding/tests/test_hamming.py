@@ -65,6 +65,18 @@ class TestSingleErrorCorrection(unittest.TestCase):
         for m, r in self.mr:
             self.assertEqual(correction.SingleErrorCorrection.redundant_bits(m), r)
 
+    def test_message_bits_from_all_bits(self):
+        "SingleErrorCorrection.message_bits with n parameter should give proper result."
+        SEC = correction.SingleErrorCorrection
+        for m in range(1,30):
+            self.assertEqual(SEC.message_bits(n=SEC.all_bits(m)), m)
+
+    def test_error_in_message_bits_from_all_bits(self):
+        "The length of the Hamming code could not be a power of 2."
+        SEC = correction.SingleErrorCorrection
+        for k in range(1,30):
+            self.assertRaises(AssertionError, SEC.message_bits_from_all_bits, 2**k)
+
 class TestHelpFunctions(unittest.TestCase):
     def test_delete_parity_bits(self):
         "delete_parity_bits should delete the 2-power bits"
@@ -201,6 +213,34 @@ class TestCoderDecoder(unittest.TestCase):
                 hamming.coder(random_block).message*2
                 )
 
+class TestCoderDecoderFunction(unittest.TestCase):
+    def test_coder_decoder(self):
+        "coder and decoder should work properly"
+        for mesg in (
+                '01110111',
+                '110111',
+                '011001111',
+                '011110010111',
+                ):
+            code = correction.hamming_coder(mesg)
+            self.assertEqual(correction.hamming_decoder(code), mesg)
+
+    def test_decoder_error(self):
+        "hamming_decoder should raise error for 2-power-length codes"
+        for code in (
+                '01110111',
+                '1101',
+                '01',
+                '0',
+                ):
+            self.assertRaises(AssertionError, correction.hamming_decoder, code)
+
+    def test_decoder_error2(self):
+        "hamming_decoder should return empty string for codes with more than 1 errors"
+        for code in (
+                '01010',
+                ):
+            self.assertEqual(correction.hamming_decoder(code), '')
 
 if __name__ == "__main__":
     unittest.main()
