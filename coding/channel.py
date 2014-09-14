@@ -8,8 +8,9 @@ class Channel:
     The index of the first bit is zero.
 
     description examples:
-        "4" changes 4 bits in the full bit sequence
-        4   (in this case it can be integer instead of string)
+        4          changes 4 bits in the full bit sequence
+        "4"        same as the previous
+        "num=4"    same as the previous
         "2-4" changes 2, 3 or 4 bits in the full bit sequence
         "4/8"  changes four bits for every 8 bits
         "2-4/8"  combination of the previous two
