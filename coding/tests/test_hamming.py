@@ -10,38 +10,61 @@ import random
 
 UNCODED = "00101100"
 CODED = "01010100111100"
+BIT_SEQUENCES = (
+    "011011010110",
+    "000000000000",
+    "111111111111",
+    "1111111111",
+    "0000000000",
+    "0000011111",
+    "0101010101",
+    "1010101010",
+    "11111111",
+    "00000000",
+    "00011111",
+    "01010101",
+    "10101010",
+    "0110110000011101111011011101111000101111"
+)
+print("\n".join([str((bits, len(bits))) for bits in BIT_SEQUENCES]))
 
 
 class TestCodeDecodeParts(unittest.TestCase):
 
-    known_pairs = (
-        (UNCODED[:4], CODED[:7]),
-        (UNCODED[4:], CODED[7:]),
-        ("1", "111"),
-        ("0110", "1100110"),
-        ("110011", "1011100011"),
-    )
+    known_values = {
+        4: (
+            (UNCODED[:4], CODED[:7]),
+            (UNCODED[4:], CODED[7:]),
+            ("1", "111"),
+            ("0110", "1100110"),
+            ("110011", "1011100011"),
+        ),
+        10: (
+            ("0100101110", "01011000101110"),
+        ),
+    }
     hamming = correction.Hamming(4)
-    known_pairs10 = (
-        ("0100101110", "01011000101110"),
-    )
     hamming10 = correction.Hamming(10)
 
     def test_part_coder(self):
         "hamming.part_coder should return the proper result"
-        for original, coded in self.known_pairs:
-            self.assertEqual(
-                self.hamming.part_coder(base.Bits(original)),
-                coded
-            )
+        for length in self.known_values:
+            hamming = correction.Hamming(length)
+            for original, coded in self.known_values[length]:
+                self.assertEqual(
+                    hamming.part_coder(base.Bits(original)),
+                    coded
+                )
 
     def test_part_decoder(self):
         "hamming.part_decoder should return the proper result"
-        for original, coded in self.known_pairs:
-            self.assertEqual(
-                self.hamming.part_decoder(coded),
-                original
-            )
+        for length in self.known_values:
+            hamming = correction.Hamming(length)
+            for original, coded in self.known_values[length]:
+                self.assertEqual(
+                    hamming.part_decoder(coded),
+                    original
+                )
 
 
 class TestSingleErrorCorrection(unittest.TestCase):
@@ -73,8 +96,7 @@ class TestSingleErrorCorrection(unittest.TestCase):
             self.assertEqual(
                 correction.SingleErrorCorrection.redundant_bits(m), r)
 
-    def test_message_bits_from_all_bits(self):
-        "SingleErrorCorrection.message_bits with n parameter should give proper result."
+    def test_calculates_number_of_message_bits_from_all_bits(self):
         SEC = correction.SingleErrorCorrection
         for m in range(1, 30):
             self.assertEqual(SEC.message_bits(n=SEC.all_bits(m)), m)
@@ -83,7 +105,8 @@ class TestSingleErrorCorrection(unittest.TestCase):
         "The length of the Hamming code could not be a power of 2."
         SEC = correction.SingleErrorCorrection
         for k in range(1, 30):
-            self.assertRaises(AssertionError, SEC.message_bits_from_all_bits, 2**k)
+            with self.assertRaises(AssertionError):
+                SEC.message_bits_from_all_bits(2**k)
 
 
 class TestHelpFunctions(unittest.TestCase):
@@ -108,66 +131,43 @@ class TestHelpFunctions(unittest.TestCase):
 
 class TestCoderDecoder(unittest.TestCase):
 
-    known_pairs = (
-        (UNCODED, CODED),
-        (UNCODED[:5], "0101010111"),
-    )
-    known_pairs5 = (
-        ('1011001100', '011001100'+'110011000'),
-        ('1011001100' + '1', '011001100'+'110011000'+'111'),
-    )
-    hamming = correction.Hamming(4)
-    hamming5 = correction.Hamming(5)
-    bit_sequences = (
-        "011011010110",
-        "000000000000",
-        "111111111111",
-        "1111111111",
-        "0000000000",
-        "0000011111",
-        "0101010101",
-        "1010101010",
-        "11111111",
-        "00000000",
-        "00011111",
-        "01010101",
-        "10101010",
-        )
+    known_values = {
+        4: (
+            (UNCODED, CODED),
+            (UNCODED[:5], "0101010111"),
+        ),
+        5: (
+            ('1011001100', '011001100'+'110011000'),
+            ('1011001100' + '1', '011001100'+'110011000'+'111'),
+        ),
+        10: (
+            ("0100101110", "01011000101110"),
+            ("0100101110" "1", "01011000101110" "111"),
+            ("0100101110"*2, "01011000101110"*2),
+        ),
+    }
 
     def test_coder(self):
         "hamming.coder should return the proper result"
-        for original, coded in self.known_pairs:
-            self.assertEqual(
-                self.hamming.coder(base.Bits(original)).message,
-                coded
-            )
-
-    def test_coder5(self):
-        "hamming.coder should return the proper result"
-        for original, coded in self.known_pairs5:
-            self.assertEqual(
-                self.hamming5.coder(base.Bits(original)).message,
-                coded
-            )
+        for length in self.known_values:
+            hamming = correction.Hamming(length)
+            for original, coded in self.known_values[length]:
+                self.assertEqual(
+                    hamming.coder(base.Bits(original)).message,
+                    coded
+                )
 
     def test_decoder(self):
         "hamming.decoder should return the proper result"
-        for original, coded in self.known_pairs:
-            self.assertEqual(
-                self.hamming.decoder(base.Bits(coded)).message,
-                original
-            )
+        for length in self.known_values:
+            hamming = correction.Hamming(length)
+            for original, coded in self.known_values[length]:
+                self.assertEqual(
+                    hamming.decoder(base.Bits(coded)).message,
+                    original
+                )
 
-    def test_decoder5(self):
-        "hamming.coder should return the proper result"
-        for original, coded in self.known_pairs5:
-            self.assertEqual(
-                self.hamming5.decoder(base.Bits(coded)).message,
-                original
-            )
-
-    def test_inverse(self):
-        "decoder should be the inverse of coder in case message length is the block length"
+    def test_decoder_gets_back_the_original_value_for_random_bits(self):
         source_ = source.Source([.5, .5], symbols="01")
         for length in range(2, 17, 2):
             hamming = correction.Hamming(length)
@@ -180,8 +180,18 @@ class TestCoderDecoder(unittest.TestCase):
                     random_msg
                 )
 
-    def test_inverse_one_error(self):
-        "decoded should be equal to the original even in case of one error"
+    def test_decoder_gets_back_the_original_value(self):
+        for length in range(2, 17):
+            hamming = correction.Hamming(length)
+            for message in BIT_SEQUENCES:
+                self.assertEqual(
+                    hamming.decoder(
+                        hamming.coder(base.Bits(message))
+                    ).message,
+                    message
+                )
+
+    def test_decoder_gets_back_the_original_value_when_1_errors(self):
         source_ = source.Source([.5, .5], symbols="01")
         for length in range(4, 17, 2):
             hamming = correction.Hamming(length-2)
@@ -237,7 +247,7 @@ class TestCoderDecoderFunction(unittest.TestCase):
             code = correction.hamming_coder(mesg)
             self.assertEqual(correction.hamming_decoder(code), mesg)
 
-    def test_decoder_error(self):
+    def test_decoder_raise_error_for_2_power_lenth_codes(self):
         "hamming_decoder should raise error for 2-power-length codes"
         for code in (
                 '01110111',
@@ -247,8 +257,7 @@ class TestCoderDecoderFunction(unittest.TestCase):
                 ):
             self.assertRaises(AssertionError, correction.hamming_decoder, code)
 
-    def test_decoder_error2(self):
-        "hamming_decoder should return empty string for codes with more than 1 errors"
+    def test_decoder_returns_empty_string_with_more_than_1_errors(self):
         for code in (
                 '01010',
                 ):
