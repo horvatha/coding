@@ -1,34 +1,37 @@
+from __future__ import print_function
 from coding import base
 import sys
 import difflib
 
 COLORS = dict(
-        list(zip([
-            'grey',
-            'red',
-            'green',
-            'yellow',
-            'blue',
-            'magenta',
-            'cyan',
-            'white',
-            'lightgreen',
-            ],
-            list(range(30, 38)) + [92]
-            ))
-        )
+    list(zip([
+        'grey',
+        'red',
+        'green',
+        'yellow',
+        'blue',
+        'magenta',
+        'cyan',
+        'white',
+        'lightgreen',
+    ],
+        list(range(30, 38)) + [92]
+    ))
+)
 
-USE_COLOR = sys.platform.startswith("linux") and not any(mod.startswith("idlelib.") for mod in sys.modules)
-if USE_COLOR:
-    escape = lambda color: '\033[{0}m'.format(COLORS[color])
-else:
-    escape = lambda color: ''
+USE_COLOR = sys.platform.startswith("linux") and \
+    not any(mod.startswith("idlelib.") for mod in sys.modules)
+
+
+def escape(color):
+    return '\033[{0}m'.format(COLORS[color]) if USE_COLOR else ''
 
 GOOD = escape("lightgreen")
 WRONG = escape("red")
 RESET = '\033[0m' if USE_COLOR else ''
 
 colored = lambda string, color: escape(color) + string + RESET
+
 
 def cprint(*args, **kwargs):
     """Prints with the color given as keyword argument color.
@@ -58,6 +61,7 @@ def cprint(*args, **kwargs):
     print(*args, **kwargs)
     if USE_COLOR:
         print(RESET, end="")
+
 
 def diff(text1, text2, with_difflib=False, use_space=False):
     """Compare two strings, Bits or Messages, and colorize the first one.
@@ -98,9 +102,9 @@ def diff(text1, text2, with_difflib=False, use_space=False):
         colored1 += RESET
         colored2 += RESET
 
-        #if not use_space:
-        #    colored1 = colored1.translate({32: None})
-        #    colored2 = colored2.translate({32: None})
+        # if not use_space:
+        #     colored1 = colored1.translate({32: None})
+        #     colored2 = colored2.translate({32: None})
     else:
         minlen = min(len(text1), len(text2))
         for i in range(minlen):
@@ -116,4 +120,3 @@ def diff(text1, text2, with_difflib=False, use_space=False):
         colored2 += text2[minlen:]
 
     return colored1, colored2
-

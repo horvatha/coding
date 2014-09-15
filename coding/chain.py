@@ -3,6 +3,7 @@ from coding import colortools
 
 CHAINCOLOR = "blue"
 
+
 class Run:
     "outputs of the runs"
 
@@ -14,7 +15,8 @@ class Run:
         for pair in self.outputs:
             yield pair
 
-    def print(self, outformat="{direction} {length:2} \"{message}\" {brokenness}",
+    def print(self,
+              outformat="{direction} {length:2} \"{message}\" {brokenness}",
               upmark="Δ", downmark="∇",
               with_elements=True):
         pairs = self.iter_pairs()
@@ -34,6 +36,7 @@ class Run:
                              brokenness=broken_string if up.broken else "")
             print(outformat.format(**down_dict))
             print(outformat.format(**up_dict))
+
 
 class Chain:
     """It simulates an information transmitting chain.
@@ -88,4 +91,3 @@ class Chain:
         for run in self.runs:
             run.print(**kwargs)
             print()
-
