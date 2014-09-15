@@ -19,7 +19,21 @@ class TestChain(unittest.TestCase):
                 Channel(1),
                 verbosity=1,
             )
-            print(repr(chain))
+            chain.run()
+            for level in [0, 1]:
+                init, final = chain.runs[-1].outputs[level]
+                self.assertEqual(init.message, final.message)
+
+    def test_hamming_code_with_0_error(self):
+        for block_length in range(10, 11):
+            source = FixSource("BCDAABDBDCDBDBDCACDD")
+            chain = Chain(
+                source,
+                Code("00 01 10 11", symbols="ABCD"),
+                Hamming(block_length),
+                Channel(0),
+                verbosity=0,
+            )
             chain.run()
             for level in [0, 1]:
                 init, final = chain.runs[-1].outputs[level]

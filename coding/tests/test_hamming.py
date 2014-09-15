@@ -26,7 +26,6 @@ BIT_SEQUENCES = (
     "10101010",
     "0110110000011101111011011101111000101111"
 )
-print("\n".join([str((bits, len(bits))) for bits in BIT_SEQUENCES]))
 
 
 class TestCodeDecodeParts(unittest.TestCase):
