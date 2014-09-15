@@ -20,7 +20,7 @@ class Run:
               upmark="Δ", downmark="∇",
               with_elements=True):
         pairs = self.iter_pairs()
-        broken_string = colortools.colored("broken", "red")
+        broken_string = colortools.colorize("broken", "red")
         for element in self.chain.iter_elements():
             if with_elements:
                 print(element)
@@ -29,7 +29,7 @@ class Run:
             except StopIteration:
                 break
             with_difflib = not isinstance(down, base.Bits)
-            message_down, message_up = colortools.diff(down, up, with_difflib=with_difflib)
+            message_down, message_up = colortools.color_diff(down, up, with_difflib=with_difflib)
             down_dict = dict(direction=downmark, length=len(down), message=message_down,
                              brokenness=broken_string if down.broken else "")
             up_dict = dict(direction=upmark, length=len(up), message=message_up,
@@ -45,7 +45,7 @@ class Chain:
         self.source, *self.codecs, self.channel = self.elements = elements
         self.levels = len(self.codecs) + 1
         self.verbosity = kwargs.pop("verbosity", 0)
-        self.broken_string = colortools.colored("broken", "red")
+        self.broken_string = colortools.colorize("broken", "red")
         self.elementcolor = kwargs.pop("elementcolor", "blue")
         self.runs = []
         if kwargs:
@@ -60,7 +60,7 @@ class Chain:
 
     def iter_elements(self):
         for elem in self.elements:
-            yield colortools.colored(repr(elem), self.elementcolor)
+            yield colortools.colorize(repr(elem), self.elementcolor)
 
     def run(self):
         outputs = [[0, 0] for i in range(self.levels)]

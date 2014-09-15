@@ -1,7 +1,8 @@
 from __future__ import print_function
 from coding import base
 import sys
-import difflib
+import itertools
+from coding import diff
 
 COLORS = dict(
     list(zip([
@@ -29,8 +30,6 @@ def escape(color):
 GOOD = escape("lightgreen")
 WRONG = escape("red")
 RESET = '\033[0m' if USE_COLOR else ''
-
-colored = lambda string, color: escape(color) + string + RESET
 
 
 def cprint(*args, **kwargs):
@@ -63,7 +62,20 @@ def cprint(*args, **kwargs):
         print(RESET, end="")
 
 
-def diff(text1, text2, with_difflib=False, use_space=False):
+def colorize(text, color="red", reset_color=True):
+    color_escape = escape(color)
+    parts = [color_escape, text]
+    if reset_color:
+        parts.append(RESET)
+    return "".join(parts)
+
+
+def alternate_colorized_text(text_list, colors=("green", "red")):
+    color_cycle = itertools.cycle(colors)
+    return "".join([colorize(text, next(color_cycle)) for text in text_list])
+
+
+def color_diff(text1, text2, with_difflib=True, use_space=False):
     """Compare two strings, Bits or Messages, and colorize the first one.
 
        text1 and text2 parameters can be string, Message or Bits. It will
@@ -76,47 +88,7 @@ def diff(text1, text2, with_difflib=False, use_space=False):
     if isinstance(text2, (base.Message, base.Bits)):
         text2 = text2.message
 
-    colored1, colored2 = "", ""
-    if min(len(text1), len(text2)) == 0:
-        return colored(text1, "red"), colored(text2, "red")
-    if with_difflib:
-        assert text1 and text1[-1] != "\n" and text2 and text2[-1] != "\n"
-        text1 += "\n"
-        text2 += "\n"
+    diff_function = diff.diff if with_difflib else diff.bitdiff
+    splitted_texts = diff_function(text1, text2)
 
-        diff = list(difflib.Differ().compare(text1, text2))[:-1]
-
-        for char in diff:
-            if char[0] == "+":
-                if use_space:
-                    colored1 += " "
-                colored2 += WRONG + char[-1]
-            elif char[0] == " ":
-                colored1 += GOOD + char[-1]
-                colored2 += GOOD + char[-1]
-            elif char[0] == "-":
-                colored1 += WRONG + char[-1]
-                if use_space:
-                    colored2 += " "
-
-        colored1 += RESET
-        colored2 += RESET
-
-        # if not use_space:
-        #     colored1 = colored1.translate({32: None})
-        #     colored2 = colored2.translate({32: None})
-    else:
-        minlen = min(len(text1), len(text2))
-        for i in range(minlen):
-            if text2[i] != text1[i]:
-                colored1 += WRONG + text1[i]
-                colored2 += WRONG + text2[i]
-            else:
-                colored1 += GOOD + text1[i]
-                colored2 += GOOD + text2[i]
-        colored1 += RESET
-        colored2 += RESET
-        colored1 += text1[minlen:]
-        colored2 += text2[minlen:]
-
-    return colored1, colored2
+    return [alternate_colorized_text(splitted) for splitted in splitted_texts]
