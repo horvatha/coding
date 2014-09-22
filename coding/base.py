@@ -5,7 +5,10 @@ import string
 import collections
 
 import math
-log2 = lambda x: math.log(x)/math.log(2)
+
+
+def log2(x):
+    return math.log(x)/math.log(2)
 
 SYMBOLS = string.ascii_uppercase
 
@@ -92,7 +95,10 @@ class Message:
             counter[symbol] = 0
         for symbol in self.message:
             counter[symbol] += 1
-        return list(counter.items())
+        existing_symbol_count = {
+            sym: count for sym, count in counter.items() if count
+        }
+        return existing_symbol_count
 
     def split(self, n):
         """Splits the message into n-symbols-long parts"""

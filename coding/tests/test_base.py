@@ -23,11 +23,11 @@ class TestMessage(unittest.TestCase):
 
     good_messages = (
         ("ABCD", {"A": 1, "B": 1, "C": 1, "D": 1}),
-        ("4: ABCD",  {"A": 1, "B": 1, "C": 1, "D": 1}),
+        ("4:ABCD",  {"A": 1, "B": 1, "C": 1, "D": 1}),
         ("1011", "01", {"0": 1, "1": 3}),
-        ("4: 1011", "01", {"0": 1, "1": 3}),
-        ("10A1", "01A", {"0": 1, "1": 2, "A": 1}),
-        ("10: ABABABABAB", {"A": 5, "B": 5}),
+        ("4:1011", "01", {"0": 1, "1": 3}),
+        ("10A1", "01A1", {"0": 1, "1": 2, "A": 1}),
+        ("10:ABABABABAB", {"A": 5, "B": 5}),
     )
 
     bad_messages = (
@@ -81,8 +81,6 @@ class TestMessage(unittest.TestCase):
             message = base.Message(mesg)
             self.assertEqual("{0}".format(message), str_)
 
-
-class TestOther(unittest.TestCase):
     def test_flip_bits(self):
         "Bits.flip_bits should flip the proper bits"
         bits = base.Bits("0111001")
@@ -91,7 +89,8 @@ class TestOther(unittest.TestCase):
             "1"*7
         )
 
-    def test_count(self):
+    @unittest.skip
+    def test_other_count(self):
         "count should return the the symbols in the proper order"
         for msg_str in "CABBBAA BACCCA ABBBCCC CBA".split():
             mesg = base.Message(msg_str, symbols="ABC")
@@ -126,6 +125,18 @@ class TestCode(unittest.TestCase):
         bad_codes = ("0 01", "01 2", "01 01")
         for code in bad_codes:
             self.assertRaises(AssertionError, base.Code, code)
+
+    def test_code_with_symbols_has_proper_representations(self):
+        codes = (
+            (
+                base.Code("00 01 10 11", symbols="BCDE"),
+                "B:00 C:01 D:10 E:110",
+                "Code('00 01 10 11', symbols='BCDE')"),
+        )
+        for code, string, repr_ in codes:
+            self.assertEqual(repr(code), repr_)
+            self.assertEqual(str(code), string)
+
 
 if __name__ == "__main__":
     unittest.main()
