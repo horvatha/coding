@@ -9,16 +9,22 @@ log2 = lambda x: math.log(x)/math.log(2)
 
 SYMBOLS = string.ascii_uppercase
 
+
 class CodingError(Exception):
     "The base class of the Errors of coding package."
     pass
-class UndecodeableError(CodingError): pass
+
+
+class UndecodeableError(CodingError):
+    pass
+
 
 def pprint(list_):
     """Pretty string format for lists with symbols"""
     n = len(list_)
     list_ = ["{p[0]}:{p[1]}".format(p=pair) for pair in zip(SYMBOLS[:n], list_)]
-    return ", ".join(list_)
+    return " ".join(list_)
+
 
 def change_bits(bits, index_list):
     """Changes the given bits of bits.
@@ -37,9 +43,14 @@ def change_bits(bits, index_list):
     if isinstance(index_list, int):
         index_list = [index_list]
     for index in index_list:
-        assert index <= len(bits), "index = {0} must be smaller than len(bits) = {1}".format(index, len(bits))
+        assert index <= len(bits), \
+            "index = {0} must be smaller than len(bits) = {1}".format(
+                index,
+                len(bits)
+            )
         bits = bits[:index-1] + other_bit[bits[index-1]] + bits[index:]
     return bits
+
 
 class Message:
     """Message
@@ -89,6 +100,7 @@ class Message:
         return [self.message[divpoints[i]:divpoints[i]+n]
                 for i in range(len(divpoints))]
 
+
 class Bits(Message):
 
     def __init__(self, bits, broken=False):
@@ -102,6 +114,7 @@ class Bits(Message):
         for i in indices:
             bits[i] = "0" if bits[i] == "1" else "1"
         return Bits("".join(bits))
+
 
 class Code:
     """Code class
@@ -120,11 +133,13 @@ class Code:
                 if i != j:
                     assert not code[j].startswith(code[i]), \
                         "the code {0} should not start"\
-                        " with the another codeword {1}".format(code[j], code[i])
+                        " with the another codeword {1}".format(
+                            code[j], code[i]
+                        )
         self.symbols = kwargs.get("symbols", SYMBOLS)
         code = list(zip(code, self.symbols))
-        self.__decode = dict(code)  #code: symbol
-        self.__code = dict([(x,y) for y,x in code])  #symbol: code
+        self.__decode = dict(code)  # code: symbol
+        self.__code = dict([(x, y) for y, x in code])  # symbol: code
 
     def __str__(self):
         return pprint(self.code)
@@ -133,7 +148,10 @@ class Code:
         if self.symbols == SYMBOLS:
             return "Code('{0}')".format(" ".join(self.code))
         else:
-            return "Code('{0}', symbols={1!r})".format(" ".join(self.code), self.symbols)
+            return "Code('{0}', symbols={1!r})".format(
+                " ".join(self.code),
+                self.symbols
+            )
 
     def __len__(self):
         return len(self.__decode)
@@ -150,7 +168,7 @@ class Code:
             bits = Bits(bits)
         message = []
         bits = bits.message[:]
-        #TODO infinite cycle solved? I think, yes.
+        # TODO infinite cycle solved? I think, yes.
         broken = False
         while bits:
             changed = False
