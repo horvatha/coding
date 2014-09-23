@@ -22,10 +22,10 @@ class UndecodeableError(CodingError):
     pass
 
 
-def pprint(list_):
+def pprint(list_, symbols):
     """Pretty string format for lists with symbols"""
     n = len(list_)
-    list_ = ["{p[0]}:{p[1]}".format(p=pair) for pair in zip(SYMBOLS[:n], list_)]
+    list_ = ["{p[0]}:{p[1]}".format(p=pair) for pair in zip(symbols[:n], list_)]
     return " ".join(list_)
 
 
@@ -61,6 +61,7 @@ class Message:
     def __init__(self, message, symbols=SYMBOLS, broken=False):
         self.symbols = symbols
         self.broken = broken
+
         parts = message.split(":")
         assert len(parts) < 3, "too many colons"
         if len(parts) == 2:
@@ -148,7 +149,7 @@ class Code:
         self.__code = dict([(x, y) for y, x in code])  # symbol: code
 
     def __str__(self):
-        return pprint(self.code)
+        return pprint(self.code, self.symbols)
 
     def __repr__(self):
         if self.symbols == SYMBOLS:
@@ -164,7 +165,7 @@ class Code:
 
     def coder(self, message):
         if not isinstance(message, Message):
-            message = Message(message)
+            message = Message(message, self.symbols)
         encoded = [self.__code[symbol] for symbol in message.message]
         encoded = "".join(encoded)
         return Bits(encoded)

@@ -103,25 +103,55 @@ class TestCode(unittest.TestCase):
         ("01101100", "BCDA"),
     )
 
-    def testCoding(self):
-        "coder should return the right code"
+    codes_with_given_symbols = (
+        (
+            base.Code("00 01 1", symbols="DEF"),
+            (
+                ('00101', 'DFE'),
+                ('00111', 'DFFF'),
+            )
+        ),
+        (
+            base.Code("00 01 1", symbols="DE_"),
+            (
+                ('00101', 'D_E'),
+                ('00111', 'D___'),
+            )
+        ),
+        (
+            base.Code("00 01 1", symbols="DE_"),
+            (
+                ('00101', 'D_E'),
+                ('00111', 'D___'),
+            )
+        ),
+    )
+
+    def test_coder_returns_the_proper_code(self):
         code = base.Code("00 01 10 11")
         for coded, message in self.codes:
             self.assertEqual(coded, code.coder(message).message)
 
-    def testDecoding(self):
-        "decoder should return the right message"
+    def test_coder_with_given_symbols_returns_the_proper_code(self):
+        for code, pairs in self.codes_with_given_symbols:
+            for coded, message in pairs:
+                self.assertEqual(coded, code.coder(message).message)
+
+    def test_decoder_returns_the_proper_message(self):
         code = base.Code("00 01 10 11")
         for coded, message in self.codes:
             self.assertEqual(message, code.decoder(coded).message)
 
-    def testUndecodable(self):
-        "undecodable bits should raise error"
+    def test_decoder_with_given_symbols_returns_the_proper_code(self):
+        for code, pairs in self.codes_with_given_symbols:
+            for coded, message in pairs:
+                self.assertEqual(message, code.decoder(coded).message)
+
+    def test_undecodable_bits_raise_error(self):
         code = base.Code("00 01 10 11")
         self.assertRaises(ValueError, code.decoder, "011", strict=True)
 
-    def testBadCodes(self):
-        "bad codes should raise error"
+    def test_bad_codes_raise_error(self):
         bad_codes = ("0 01", "01 2", "01 01")
         for code in bad_codes:
             self.assertRaises(AssertionError, base.Code, code)
@@ -130,8 +160,14 @@ class TestCode(unittest.TestCase):
         codes = (
             (
                 base.Code("00 01 10 11", symbols="BCDE"),
-                "B:00 C:01 D:10 E:110",
-                "Code('00 01 10 11', symbols='BCDE')"),
+                "B:00 C:01 D:10 E:11",
+                "Code('00 01 10 11', symbols='BCDE')"
+            ),
+            (
+                base.Code("00 01 10 11", symbols="BCD_"),
+                "B:00 C:01 D:10 _:11",
+                "Code('00 01 10 11', symbols='BCD_')"
+            ),
         )
         for code, string, repr_ in codes:
             self.assertEqual(repr(code), repr_)
