@@ -1,5 +1,4 @@
 import random
-from coding import base
 
 
 class Channel:
@@ -26,8 +25,8 @@ class Channel:
             for i in description:
                 assert isinstance(i, int)
             description = "bits={0}".format(
-                    ",".join(str(b) for b in description)
-                    )
+                ",".join(str(b) for b in description)
+            )
         if isinstance(description, float):
             assert 0 <= description < 1
             description = "ber={0}".format(description)
@@ -43,11 +42,11 @@ class Channel:
 
     def run(self, input_):
         if self.type == "num":
-            if not "/" in self.value:
+            if "/" not in self.value:
                 interval = self.value
             else:
                 raise NotImplementedError
-            if not "-" in self.value:
+            if "-" not in self.value:
                 bit_error_num = int(self.value)
             else:
                 min_, max_ = self.value.split("-")
@@ -59,10 +58,8 @@ class Channel:
             errors = [i for i in range(len(input_))
                       if random.random() < float(self.value)]
         elif self.type == "bits":
-            errors = [(int(i) - 1)
-                for i in self.value.split(",")]
+            errors = [(int(i) - 1) for i in self.value.split(",")]
         return input_.flip_bits(errors)
 
     def __repr__(self):
         return 'Channel("{0}={1}")'.format(self.type, self.value)
-
