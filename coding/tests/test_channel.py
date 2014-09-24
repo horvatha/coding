@@ -1,13 +1,12 @@
 """Tests of channel.py"""
 import unittest
-from coding import channel
-import coding
+from coding import Channel, Bits
 
 
 class TestChannel(unittest.TestCase):
-    """Test Channel module of channel.py"""
+    """Test module of channel.py"""
 
-    bits = coding.Bits("01110010")
+    bits = Bits("01110010")
 
     known_values = (
         ((0, "num=0"), "0", "num", "hibamentes csatorna"),
@@ -33,16 +32,16 @@ class TestChannel(unittest.TestCase):
 
     def test_equivalent_desc_have_same_representations_and_run(self):
         for descriptions, value, type_, text in self.known_values:
-            chan = channel.Channel(descriptions[0])
+            chan = Channel(descriptions[0])
             for desc in descriptions:
-                chan2 = channel.Channel(desc)
+                chan2 = Channel(desc)
                 chan.run(self.bits)
                 self.assertEqual(repr(chan), repr(chan2))
 
     def test_desc_have_proper_values_and_types(self):
         for descriptions, value, type_, text in self.known_values:
             for desc in descriptions:
-                chan = channel.Channel(desc)
+                chan = Channel(desc)
                 self.assertEqual(chan.value, value)
                 self.assertEqual(chan.type, type_)
 
@@ -50,13 +49,13 @@ class TestChannel(unittest.TestCase):
         "should have the proper representation and should be run on input"
         for desc in ("1/7", "1-2", "1-2/7"):
             # TODO to complete
-            chan = channel.Channel(desc)
+            chan = Channel(desc)
             chan.run(self.bits)
 
     def test_verbose_description_returns_the_proper_value(self):
         for descriptions, value, type_, text in self.known_values:
             for desc in descriptions:
-                this_channel = channel.Channel(desc)
+                this_channel = Channel(desc)
                 self.assertEqual(this_channel.verbose_description(), text)
 
 
