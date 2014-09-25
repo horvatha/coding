@@ -90,8 +90,13 @@ class TestRun(unittest.TestCase):
         for chain, outputs, elements in known_values:
             chain.run()
             run = chain.runs[0]
-            self.assertEqual(run.chain.elements, elements)
-            self.assertEqual(run.outputs, outputs)
+            self.assertEqual(repr(run.chain.elements), repr(elements))
+            for output_pair, run_output_pair in zip(outputs, run.outputs):
+                for i in (0, 1):
+                    self.assertEqual(
+                        output_pair[i].message,
+                        run_output_pair[i].message
+                    )
 
 if __name__ == "__main__":
     unittest.main()
