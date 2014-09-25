@@ -15,6 +15,13 @@ class Run:
         for pair in self.outputs:
             yield pair
 
+    def get_items_linearized(self):
+        items = []
+        for down, up in reversed(self.outputs):
+            items.insert(0, down.message)
+            items.append(up.message)
+        return tuple(items)
+
     def print_run(self,
               outformat="{direction} {length:2} \"{message}\" {brokenness}",
               upmark="Δ", downmark="∇",

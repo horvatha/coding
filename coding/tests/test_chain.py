@@ -65,6 +65,16 @@ known_values = (
             Hamming(4),
             Channel("bits=3,11,17,21,21,24,26")
         ),
+        (
+            (
+                "ALABAMA",
+                "00100001001100",
+                "01010101101001100001100000",
+                "01110101100001101001100101",
+                "001000010011",
+                "ALABAM",
+            )
+        ),
 
     ),
 )
@@ -87,7 +97,7 @@ class TestRun(unittest.TestCase):
         print(run.outputs, run.chain.elements, sep="\n")
 
     def test_runs_create_proper_attributes(self):
-        for chain, outputs, elements in known_values:
+        for chain, outputs, elements, _ in known_values:
             chain.run()
             run = chain.runs[0]
             self.assertEqual(repr(run.chain.elements), repr(elements))
@@ -97,6 +107,13 @@ class TestRun(unittest.TestCase):
                         output_pair[i].message,
                         run_output_pair[i].message
                     )
+
+    def test_get_items_linearized_return_proper_values(self):
+        for chain, _, _, expected_value in known_values:
+            chain.run()
+            run = chain.runs[0]
+            self.assertEqual(run.get_items_linearized(), expected_value)
+
 
 if __name__ == "__main__":
     unittest.main()
