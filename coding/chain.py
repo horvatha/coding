@@ -15,13 +15,13 @@ class Run:
         for pair in self.outputs:
             yield pair
 
-    def print(self,
+    def print_run(self,
               outformat="{direction} {length:2} \"{message}\" {brokenness}",
               upmark="Δ", downmark="∇",
               with_elements=True):
         pairs = self.iter_pairs()
         broken_string = colortools.colorize("broken", "red")
-        for element in self.chain.iter_elements():
+        for element in self.chain.iter_color_elements():
             if with_elements:
                 print(element)
             try:
@@ -58,7 +58,7 @@ class Chain:
     def __repr__(self):
         return "Channel({0},\n    verbosity={1})".format(self, self.verbosity)
 
-    def iter_elements(self):
+    def iter_color_elements(self):
         for elem in self.elements:
             yield colortools.colorize(repr(elem), self.elementcolor)
 
@@ -85,9 +85,9 @@ class Chain:
         if not self.runs:
             self.run()
         run = self.runs[n]
-        run.print(**kwargs)
+        run.print_run(**kwargs)
 
     def print_all(self, **kwargs):
         for run in self.runs:
-            run.print(**kwargs)
+            run.print_run(**kwargs)
             print()
