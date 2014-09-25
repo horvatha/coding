@@ -67,6 +67,8 @@ def split_text(text, matching_blocks, index):
 
 
 def normalize(splitted):
+    if not splitted:
+        return
     if splitted[0] == "":
         splitted.pop(0)
     else:
