@@ -2,8 +2,9 @@
 
 """Unittest for chain.py."""
 
+from __future__ import print_function
 import unittest
-from coding import (Chain, FixSource, Code, Hamming, Channel)
+from coding import (Chain, FixSource, Code, Hamming, Channel, Message, Bits)
 
 
 class TestChain(unittest.TestCase):
@@ -40,8 +41,37 @@ class TestChain(unittest.TestCase):
                 self.assertEqual(init.message, final.message)
 
 
+fix_source = FixSource("ALABAMA")
+known_values = (
+    (
+        Chain(
+            fix_source,
+            Code("00 01 10 11", symbols=fix_source.symbols),
+            Hamming(4),
+            Channel("bits=3,11,17,21,21,24,26"),
+            verbosity=1,
+        ),
+        [
+            [Message("7:ALABAMA"), Message("6:ALABAM")],
+            [Bits("14:00100001001100"), Bits("12:001000010011")],
+            [
+                Bits("26:01010101101001100001100000"),
+                Bits("26:01110101100001101001100101")
+            ]
+        ],
+        (
+            FixSource('ALABAMA'),
+            Code('00 01 10 11', symbols='ABLM'),
+            Hamming(4),
+            Channel("bits=3,11,17,21,21,24,26")
+        ),
+
+    ),
+)
+
+
 class TestRun(unittest.TestCase):
-    def test_print(self):
+    def test_run_can_print(self):
         source = FixSource("ALABAMA")
         chain = Chain(
             source,
@@ -53,6 +83,15 @@ class TestRun(unittest.TestCase):
         chain.print_run()
         print()
         chain.print_run(with_elements=False)
+        run = chain.runs[0]
+        print(run.outputs, run.chain.elements, sep="\n")
+
+    def test_runs_create_proper_attributes(self):
+        for chain, outputs, elements in known_values:
+            chain.run()
+            run = chain.runs[0]
+            self.assertEqual(run.chain.elements, elements)
+            self.assertEqual(run.outputs, outputs)
 
 if __name__ == "__main__":
     unittest.main()
