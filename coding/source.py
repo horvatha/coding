@@ -50,7 +50,7 @@ class Source:
                 )
 
     def __str__(self):
-        return pprint(self.distribution)
+        return pprint(self.distribution, self.symbols)
 
     def __repr__(self):
         msg = ", class_=Bits" if self.class_ is Bits else ""
