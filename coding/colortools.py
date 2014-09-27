@@ -1,3 +1,4 @@
+"""Tools for coloring text in shell."""
 from __future__ import print_function
 from coding import base
 import sys
@@ -75,7 +76,7 @@ def alternate_colorized_text(text_list, colors=("green", "red")):
     return "".join([colorize(text, next(color_cycle)) for text in text_list])
 
 
-def color_diff(text1, text2, with_difflib=True, use_space=False):
+def color_diff(text1, text2, with_difflib=True):
     """Compare two strings, Bits or Messages, and colorize the first one.
 
        text1 and text2 parameters can be string, Message or Bits. It will

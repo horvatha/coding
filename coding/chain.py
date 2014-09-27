@@ -15,13 +15,6 @@ class Run:
         for pair in self.outputs:
             yield pair
 
-    def get_items_linearized(self):
-        items = []
-        for down, up in reversed(self.outputs):
-            items.insert(0, down.message)
-            items.append(up.message)
-        return tuple(items)
-
     def print_run(self,
               outformat="{direction} {length:2} \"{message}\" {brokenness}",
               upmark="Δ", downmark="∇",
@@ -36,11 +29,15 @@ class Run:
             except StopIteration:
                 break
             with_difflib = not isinstance(down, base.Bits)
-            message_down, message_up = colortools.color_diff(down, up, with_difflib=with_difflib)
-            down_dict = dict(direction=downmark, length=len(down), message=message_down,
+            message_down, message_up = colortools.color_diff(
+                down, up, with_difflib=with_difflib
+            )
+            down_dict = dict(direction=downmark, length=len(down),
+                             message=message_down,
                              brokenness=broken_string if down.broken else "")
-            up_dict = dict(direction=upmark, length=len(up), message=message_up,
-                             brokenness=broken_string if up.broken else "")
+            up_dict = dict(direction=upmark, length=len(up),
+                           message=message_up,
+                           brokenness=broken_string if up.broken else "")
             print(outformat.format(**down_dict))
             print(outformat.format(**up_dict))
 
