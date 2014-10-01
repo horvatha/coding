@@ -1,5 +1,6 @@
 from coding.base import Bits, Message, Code, SYMBOLS, pprint, log2
 from random import random
+from fractions import Fraction
 
 class CodingSourceError(Exception): pass
 
@@ -28,7 +29,7 @@ class Source:
             The class of the source.
         """
         if isinstance(distribution, int):
-            distribution = [1/distribution] * distribution
+            distribution = [Fraction(1/distribution)] * distribution
         self.distribution = distribution
         assert len(distribution) <= len(symbols), "Túl kevés a jel."
         self.class_ = kwargs.pop("class_", Message)
@@ -88,8 +89,9 @@ class Source:
     def entropy(self):
         return sum([p*log2(1/p) for p in self.distribution])
 
-    def information(self):
-        return [(sym, log2(1/p)) for sym, p in zip(self.symbols, self.distribution)]
+    def information(self, ndigits=3):
+        return [(sym, round(log2(1/p), ndigits))
+                for sym, p in zip(self.symbols, self.distribution)]
 
     uzenet = message
 
