@@ -32,12 +32,18 @@ class Run:
             message_down, message_up = colortools.color_diff(
                 down, up, with_difflib=with_difflib
             )
-            down_dict = dict(direction=downmark, length=len(down),
-                             message=message_down,
-                             brokenness=broken_string if down.broken else "")
-            up_dict = dict(direction=upmark, length=len(up),
-                           message=message_up,
-                           brokenness=broken_string if up.broken else "")
+            down_dict = dict(
+                direction=downmark,
+                length=len(down),
+                message=message_down,
+                brokenness=broken_string if down.broken else ""
+            )
+            up_dict = dict(
+                direction=upmark,
+                length=len(up),
+                message=message_up,
+                brokenness=broken_string if up.broken else ""
+            )
             print(outformat.format(**down_dict))
             print(outformat.format(**up_dict))
 
@@ -64,7 +70,7 @@ class Chain:
 
     def iter_color_elements(self):
         for elem in self.elements:
-            yield colortools.colorize(repr(elem), self.elementcolor)
+            yield colortools.colorize(str(elem), self.elementcolor)
 
     def run(self):
         outputs = [[0, 0] for i in range(self.levels)]
