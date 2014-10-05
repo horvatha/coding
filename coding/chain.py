@@ -16,9 +16,9 @@ class Run:
             yield pair
 
     def print_run(self,
-              outformat="{direction} {length:2} \"{message}\" {brokenness}",
-              upmark="Δ", downmark="∇",
-              with_elements=True):
+                  outformat='{direction} {length:2} "{message}" {brokenness}',
+                  upmark="Δ", downmark="∇",
+                  with_elements=True):
         pairs = self.iter_pairs()
         broken_string = colortools.colorize("broken", "red")
         for element in self.chain.iter_color_elements():

@@ -1,13 +1,16 @@
-from coding.base import Bits, Message, Code, SYMBOLS, pprint, log2
+from coding.base import Bits, Message, SYMBOLS, pprint, log2
 from random import random
 from fractions import Fraction
 
-class CodingSourceError(Exception): pass
+
+class CodingSourceError(Exception):
+    pass
+
 
 class Source:
     """Creating radom messages."""
     def __init__(self, distribution, *, symbols=SYMBOLS,
-            **kwargs):
+                 **kwargs):
         """Create a Source object, and checks the validity of the distribution.
 
         Arguments:
@@ -29,17 +32,19 @@ class Source:
             The class of the source.
         """
         if isinstance(distribution, int):
-            distribution = [Fraction(1/distribution)] * distribution
+            distribution = [Fraction(1, distribution)] * distribution
         self.distribution = distribution
         assert len(distribution) <= len(symbols), "Túl kevés a jel."
         self.class_ = kwargs.pop("class_", Message)
         if self.class_ is Bits:
             symbols = "01"
-            assert len(self.distribution) < 3, 'distribution of Bits must be smaller than 3'
+            assert len(self.distribution) < 3,\
+                'distribution of Bits must be smaller than 3'
         else:
             assert self.class_ is Message, 'class_ must be Bits or Message'
         sum_precision = kwargs.pop("sum_precision", 1e-13)
-        assert abs(sum(distribution) - 1) < sum_precision, "A valószínűségek összege nem 1, hanem %f." % sum(distribution)
+        assert abs(sum(distribution) - 1) < sum_precision,\
+            "A valószínűségek összege nem 1, hanem %f." % sum(distribution)
         self.symbols = symbols[:len(distribution)]
         self.n = len(distribution)
         self.length = kwargs.pop("length", None)
@@ -99,7 +104,8 @@ class Source:
 class BitSource(Source):
     def __init__(self, distribution=2, **kwargs):
         super().__init__(distribution, symbols='01',
-                class_=Bits, **kwargs)
+                         class_=Bits, **kwargs)
+
 
 class FixSource:
     """Creating a constant message.
@@ -112,7 +118,7 @@ class FixSource:
     """
 
     def __init__(self, message, symbols=None, class_=Message,
-            **kwargs):
+                 **kwargs):
         if symbols is None:
             self.symbols = "".join(sorted(list(set(message))))
         else:
@@ -131,3 +137,5 @@ class FixSource:
     def __repr__(self):
         return "FixSource({0!r})".format(self.__message.message)
 
+    def __str__(self):
+        return "fix.{}".format(self.__message.message)

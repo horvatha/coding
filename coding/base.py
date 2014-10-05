@@ -25,7 +25,8 @@ class UndecodeableError(CodingError):
 def pprint(list_, symbols):
     """Pretty string format for lists with symbols"""
     n = len(list_)
-    list_ = ["{p[0]}:{p[1]}".format(p=pair) for pair in zip(symbols[:n], list_)]
+    list_ = ["{p[0]}:{p[1]}".format(p=pair)
+             for pair in zip(symbols[:n], list_)]
     return " ".join(list_)
 
 
