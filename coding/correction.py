@@ -87,7 +87,6 @@ class Hamming:
                 bits = bits[1:]
             i += 1
 
-        i = 0
         for tp in two_powers:
             if tp > len(hamming_code):
                 break
