@@ -76,7 +76,7 @@ class Channel:
                     return "csatorna {} hibával".format(self.value)
         if self.type == "ber":
             return \
-                "csatorna, amely a bitek 0.1 részét elrontja".format(self.value)
+                "csatorna, amely a bitek {} részét elrontja".format(self.value)
         if self.type == "bits":
             return "csatorna, amely a következő"\
                 " biteket elrontja: {}".format(self.value)

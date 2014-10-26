@@ -21,7 +21,14 @@ class TestChannel(unittest.TestCase):
             (.1, "ber=0.1"),
             "0.1",
             "ber",
-            "csatorna, amely a bitek 0.1 részét elrontja"),
+            "csatorna, amely a bitek 0.1 részét elrontja"
+        ),
+        (
+            (.3, "ber=0.3"),
+            "0.3",
+            "ber",
+            "csatorna, amely a bitek 0.3 részét elrontja"
+        ),
         (
             ([1, 3, -1], "bits=1,3,-1"),
             "1,3,-1",
