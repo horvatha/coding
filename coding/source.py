@@ -91,8 +91,17 @@ class Source:
             message += self.symbols[symbol]
         return self.class_(message, self.symbols)
 
+    def max_entropy(self):
+        return log2(self.n)
+
     def entropy(self):
         return sum([p*log2(1/p) for p in self.distribution])
+
+    def efficiency(self):
+        return self.entropy() / self.max_entropy()
+
+    def redundancy(self):
+        return 1 - self.efficiency()
 
     def information(self, ndigits=3):
         return [(sym, round(log2(1/p), ndigits))

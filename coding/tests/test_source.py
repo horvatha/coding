@@ -42,6 +42,14 @@ class TestSource(unittest.TestCase):
         self.assertAlmostEqual(self.sources["ird5_2"].entropy(),
                                1.9609640474436814)
 
+    def test_efficiency(self):
+        "efficiency method should return the proper values"
+        self.assertEqual(self.sources["iid5"].efficiency(), 1)
+        self.assertEqual(self.sources["ird4"].efficiency(), 1.75/log2(4))
+        self.assertEqual(self.sources["ird5"].efficiency(), 2/log2(5))
+        self.assertAlmostEqual(self.sources["ird5_2"].efficiency(),
+                               1.9609640474436814/log2(5))
+
     def test_string_version(self):
         iid5 = self.sources["iid5"]
         self.assertEqual(str(iid5),
