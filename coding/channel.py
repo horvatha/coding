@@ -30,6 +30,7 @@ class Channel:
         if isinstance(description, float):
             assert 0 <= description < 1
             description = "ber={0}".format(description)
+        self.description = description
         splitted = description.split("=")
         assert len(splitted) in (1, 2)
         if len(splitted) == 1:
